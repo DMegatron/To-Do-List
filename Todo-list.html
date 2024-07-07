@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Todo List</title>
+
+    <style>
+        body {
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .title {
+            text-align: center;
+            margin-top: 0px;
+        }
+
+        .main-body {
+            background: linear-gradient(45deg, #ffe6e6, #ffcbcb);
+            border: 2px solid black;
+            border-radius: 10px;
+            padding: 20px;
+            padding-top: 0px;
+            margin-top: 30px;
+        }
+
+        .stuff-to-do {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Ensure elements are evenly spaced with the "Done" button on the right */
+            background-color: #ede2e2;
+            height: 25px;
+            padding: 10px;
+            padding-left: 8px;
+            border-radius: 20px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .inner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .index {
+            text-align: center;
+            background-color: white;
+            width: 17px;
+            border-radius: 100%;
+            padding: 7px;
+        }
+
+        .tasks {
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        .stuff-to-do .del {
+            position: relative;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            color: #000000;
+            font-weight: bold;
+            outline: none;
+            margin-left: 10px;
+        }
+
+        .stuff-to-do .del:hover {
+            text-decoration: underline;
+        }
+
+        .todo, .date, .add, .clr {
+            font-size: 15px;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: white;
+            border: none;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2)
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="main-body">
+        <div class="title">
+            <h2>Todo List</h2>
+        </div>
+
+        <div class="input">
+            <input type="text" class="todo" placeholder="Task">
+            <input type="date" class="date">
+            <button class="add" onclick="addTask();">Add</button>
+            <button class="clr" onclick="clearTasks();">Clear</button>
+        </div>
+
+        <div class="display"></div>
+
+    </div>
+
+    <script>
+
+        let tasks = JSON.parse(localStorage.getItem('todo'));
+        if (tasks === null) {
+            tasks = [];
+        }
+        function addTask() {
+            if (document.querySelector('.todo').value != '') {
+                tasks.push({ w: document.querySelector('.todo').value, d: document.querySelector('.date').value });
+                document.querySelector('.todo').value = '';
+            }
+            localStorage.setItem('todo', JSON.stringify(tasks));
+            show();
+        }
+
+        function clearTasks() {
+            localStorage.removeItem('todo');
+            tasks = [];
+            document.querySelector('.display').innerHTML = '';
+        }
+        function show() {
+            let display = '';
+            for (let i = 0; i < tasks.length; i++) {
+                display += `
+                <div class="stuff-to-do">
+                <div class="inner">
+                <p class="index">${i + 1}</p>
+                <p class="tasks">${tasks[i].w}&nbsp;&nbsp;&nbsp;Date: ${tasks[i].d}</p>
+                </div>
+
+                <div>
+                <button class="del" onclick="
+                tasks.splice(${i}, 1); 
+                localStorage.setItem('todo', JSON.stringify(tasks)); 
+                show();
+                "
+                >Done</button>
+                </div>    
+    </div>
+                `;
+            }
+            document.querySelector('.display').innerHTML = display;
+        }
+
+        document.addEventListener('keydown', function(event) {
+            // console.log(event.key);
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                addTask();
+            }
+        });
+
+        show();
+    </script>
+
+</body>
+
+</html>
